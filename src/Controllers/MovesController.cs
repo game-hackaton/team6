@@ -14,46 +14,48 @@ public class MovesController : Controller
     [HttpPost]
     public IActionResult Moves(Guid gameId, [FromBody]UserInputDto userInput)
     {
-        GamesRepository.start =
-            GamesRepository.start == null ? new VectorDto() { X = 1, Y = 1 } : GamesRepository.start;
-         
-        var move = GetMove(userInput, GamesRepository.start);
-        var game = TestData.AGameDto(GamesRepository.start, gameId);
-        if (GamesRepository.Games.TryGetValue(gameId, out var game1))
-        {
-            game = game1;
-        }
-        var prev = new VectorDto(){X = GamesRepository.start.X, Y = GamesRepository.start.Y};
+        if (!GamesRepository.Games.TryGetValue(gameId, out var game))
+            return NotFound();
+        
+        var player = game.Cells.First(c => c.Type == "player");
+        var move = GetMove(userInput, player.Pos);
+        
+        moveBrick(game, move, player.Pos);
+        
         if (!IsWall(game, move))
         {
-            GamesRepository.start = move;
+            player.Pos = move;
         }
-        game.Cells.First(c => c.Type == "player").Pos = GamesRepository.start;
-        moveBrick(game, move, prev);
+        
         return Ok(game);
     }
 
     public void moveBrick(GameDto game, VectorDto pos, VectorDto prev)
     {
+        var next = new VectorDto() { X = pos.X - prev.X, Y = pos.Y - prev.Y };
         var t = game.Cells.Any(c => c.Pos.X == pos.X && c.Pos.Y == pos.Y && c.Type == "box");
-        if (t)
+        if (t && !IsWall(game, new VectorDto() {X = pos.X + next.X, Y = pos.Y + next.Y}))
         {
             var box = game.Cells.First(c => c.Pos.X == pos.X && c.Pos.Y == pos.Y && c.Type == "box");
             if (prev.X < pos.X)
             {
+                prev.X++;
                 box.Pos.X++;
             }
             
             else if (prev.X > pos.X)
             {
+                prev.X--;
                 box.Pos.X--;
             }
             else if (prev.Y < pos.Y)
             {
+                prev.Y++;
                 box.Pos.Y++;
             }
             else if (prev.Y > pos.Y)
             {
+                prev.Y--;
                 box.Pos.Y--;
             }
         }
@@ -61,7 +63,7 @@ public class MovesController : Controller
     
     public bool IsWall(GameDto game, VectorDto pos)
     {
-        var objects = new HashSet<string>(){"wall"};
+        var objects = new HashSet<string>(){"wall", "box"};
         var b = game.Cells.Any(c => c.Pos.X == pos.X && c.Pos.Y == pos.Y && objects.Contains(c.Type));
         return b;
     }
