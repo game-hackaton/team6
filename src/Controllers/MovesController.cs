@@ -16,15 +16,18 @@ public class MovesController : Controller
     {
         GamesRepository.start =
             GamesRepository.start == null ? new VectorDto() { X = 1, Y = 1 } : GamesRepository.start;
-        
+         
         var move = GetMove(userInput, GamesRepository.start);
-        var game = TestData.AGameDto(GamesRepository.start);
+        var game = TestData.AGameDto(GamesRepository.start, gameId);
+        if (GamesRepository.Games.TryGetValue(gameId, out var game1))
+        {
+            game = game1;
+        }
         var prev = new VectorDto(){X = GamesRepository.start.X, Y = GamesRepository.start.Y};
         if (!IsWall(game, move))
         {
             GamesRepository.start = move;
         }
-        game = TestData.AGameDto(GamesRepository.start);
         game.Cells.First(c => c.Type == "player").Pos = GamesRepository.start;
         moveBrick(game, move, prev);
         return Ok(game);
