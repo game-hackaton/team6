@@ -8,12 +8,12 @@ namespace thegame.Services;
 public class TestData
 {
     public static readonly string[] Map = { "OOOOOOOOOO", 
-                                 "OPXXXXXXXO", 
-                                 "OXXBXXXXXO", 
-                                 "OXXXXXXXXO", 
-                                 "OXXTXXXXXO", 
-                                 "OXXXXXXXXO", 
-                                 "OXXXXXXXXO", 
+                                 "OOOXXXOOOO", 
+                                 "OXXXBXXBXO", 
+                                 "OXBXPBXXXO", 
+                                 "OOOBBOOOOO", 
+                                 "OOOXXTTOOO", 
+                                 "OOOTTTTOOO", 
                                  "OOOOOOOOOO" };
     public static GameDto AGameDto(VectorDto movingObjectPosition, Guid gameId)
     {

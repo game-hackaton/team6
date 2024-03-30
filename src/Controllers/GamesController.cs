@@ -12,7 +12,7 @@ public class GamesController : Controller
     public IActionResult Index()
     {
         var guid = Guid.NewGuid();
-        GamesRepository.Games.Add(guid, TestData.AGameDto(new VectorDto() {X = 1, Y = 1}, guid));
+        GamesRepository.Games.Add(guid, TestData.AGameDto(new VectorDto() {X = 4, Y = 3}, guid));
         return Ok(GamesRepository.Games[guid]);
     }
 }
