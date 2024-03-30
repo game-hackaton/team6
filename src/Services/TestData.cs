@@ -1,22 +1,35 @@
 ﻿using System;
+using System.Collections.Generic;
 using thegame.Models;
 
 namespace thegame.Services;
 
 public class TestData
 {
+    public static readonly string[] Map = { "OOOOOOOOOO", 
+                                 "OPXXXXXXXO", 
+                                 "OXXBXXXXXO", 
+                                 "OXXXXXXXXO", 
+                                 "OXXTXXXXXO", 
+                                 "OXXXXXXXXO", 
+                                 "OXXXXXXXXO", 
+                                 "OOOOOOOOOO" };
     public static GameDto AGameDto(VectorDto movingObjectPosition)
     {
-        var width = 10;
-        var height = 8;
-        var testCells = new[]
-        {
-            new CellDto("1", new VectorDto {X = 2, Y = 4}, "color1", "", 0),
-            new CellDto("2", new VectorDto {X = 5, Y = 4}, "color1", "", 0),
-            new CellDto("3", new VectorDto {X = 3, Y = 1}, "color2", "", 20),
-            new CellDto("4", new VectorDto {X = 1, Y = 0}, "color2", "", 20),
-            new CellDto("5", movingObjectPosition, "color4", "☺", 10),
-        };
-        return new GameDto(testCells, true, true, width, height, Guid.Empty, movingObjectPosition.X == 0, movingObjectPosition.Y);
+        var width = Map[0].Length;
+        var height = Map.Length;
+        var serializer = new MapSerializer();
+
+        var testCells = new List<CellDto>();
+        
+        for (var x = 0; x < width; x++)
+            for (var y = 0; y < height; y++)
+            {
+                if (Map[y][x] != 'P')
+                    testCells.Add(serializer.ParseToCell(Map[y][x], y + " " + x, new VectorDto {X = x, Y = y}));
+                else testCells.Add(serializer.ParseToCell(Map[y][x], y + " " + x, movingObjectPosition));
+            }
+        
+        return new GameDto(testCells.ToArray(), true, true, width, height, Guid.Empty, movingObjectPosition.X == 0, movingObjectPosition.Y);
     }
 }
