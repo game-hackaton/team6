@@ -26,6 +26,9 @@ public class MovesController : Controller
         {
             player.Pos = move;
         }
+
+        game.Score = game.Cells.Count(x => x.Type == "boxOnTarget") * 10;
+        game.IsFinished = game.Cells.Count(x => x.Type == "boxOnTarget") == game.Cells.Count(x => x.Type == "target");
         
         return Ok(game);
     }

@@ -34,6 +34,6 @@ public class TestData
 
         boxes = testCells.Count(x => x.Type == "box");
         
-        return new GameDto(testCells.ToArray(), true, false, width, height, gameId, testCells.Count(x => x.Type == "boxOnTarget") == boxes, testCells.Count(x => x.Type == "boxOnTarget") * 10);
+        return new GameDto(testCells.ToArray(), true, false, width, height, gameId, false, 0);
     }
 }
