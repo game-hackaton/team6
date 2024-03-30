@@ -33,10 +33,10 @@ public class MovesController : Controller
     public void moveBrick(GameDto game, VectorDto pos, VectorDto prev)
     {
         var next = new VectorDto() { X = pos.X - prev.X, Y = pos.Y - prev.Y };
-        var t = game.Cells.Any(c => c.Pos.X == pos.X && c.Pos.Y == pos.Y && c.Type == "box");
+        var t = game.Cells.Any(c => c.Pos.X == pos.X && c.Pos.Y == pos.Y && (c.Type == "box" || c.Type == "boxOnTarget"));
         if (t && !IsWall(game, new VectorDto() {X = pos.X + next.X, Y = pos.Y + next.Y}))
         {
-            var box = game.Cells.First(c => c.Pos.X == pos.X && c.Pos.Y == pos.Y && c.Type == "box");
+            var box = game.Cells.First(c => c.Pos.X == pos.X && c.Pos.Y == pos.Y && (c.Type == "box" || c.Type == "boxOnTarget"));
             if (prev.X < pos.X)
             {
                 prev.X++;
@@ -58,12 +58,21 @@ public class MovesController : Controller
                 prev.Y--;
                 box.Pos.Y--;
             }
+
+            if (game.Cells.Any(c => c.Type == "target" && c.Pos.X == box.Pos.X && c.Pos.Y == box.Pos.Y))
+            {
+                box.Type = "boxOnTarget";
+            }
+            else
+            {
+                box.Type = "box";
+            }
         }
     }
     
     public bool IsWall(GameDto game, VectorDto pos)
     {
-        var objects = new HashSet<string>(){"wall", "box"};
+        var objects = new HashSet<string>(){"wall", "box", "boxOnTarget"};
         var b = game.Cells.Any(c => c.Pos.X == pos.X && c.Pos.Y == pos.Y && objects.Contains(c.Type));
         return b;
     }
