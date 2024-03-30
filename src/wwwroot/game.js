@@ -3,6 +3,8 @@ const startMessage = document.getElementsByClassName("startMessage")[0];
 const startgameOverlay = document.getElementsByClassName("start")[0];
 const scoreElement = document.getElementsByClassName("scoreContainer")[0];
 const startButton = document.getElementsByClassName("startButton")[0];
+const startButton1 = document.getElementsByClassName("startButton1")[0];
+const startButton2 = document.getElementsByClassName("startButton2")[0];
 let game = null;
 let currentCells = {};
 
@@ -16,6 +18,20 @@ function handleApiErrors(result) {
 
 async function startGame() {
     game = await fetch("/api/games", { method: "POST" })
+        .then(handleApiErrors);
+    window.history.replaceState(game.id, "The Game", "/" + game.id);
+    renderField(game);
+}
+
+async function startGame1() {
+    game = await fetch("/api/games", { method: "POST" })
+        .then(handleApiErrors);
+    window.history.replaceState(game.id, "The Game", "/" + game.id);
+    renderField(game);
+}
+
+async function startGame2() {
+    game = await fetch("/api/games?level=1", { method: "POST" })
         .then(handleApiErrors);
     window.history.replaceState(game.id, "The Game", "/" + game.id);
     renderField(game);
@@ -148,6 +164,14 @@ function initializePage() {
     startButton.addEventListener("click", e => {
         startgameOverlay.classList.toggle("hidden", true);
         startGame();
+    });
+    startButton1.addEventListener("click", e => {
+        startgameOverlay.classList.toggle("hidden", true);
+        startGame1();
+    });
+    startButton2.addEventListener("click", e => {
+        startgameOverlay.classList.toggle("hidden", true);
+        startGame2();
     });
     addKeyboardListener();
     addResizeListener();

@@ -29,7 +29,9 @@ public class MovesController : Controller
 
         game.Score = game.Cells.Count(x => x.Type == "boxOnTarget") * 10;
         game.IsFinished = game.Cells.Count(x => x.Type == "boxOnTarget") == game.Cells.Count(x => x.Type == "target");
-        
+
+        if (game.IsFinished)
+            game = TestData.AGameDto1(new VectorDto() { X = 4, Y = 3 }, game.Id);
         return Ok(game);
     }
 
