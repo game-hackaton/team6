@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.Xml;
 using Microsoft.AspNetCore.Mvc;
 using thegame.Models;
 using thegame.Services;
@@ -13,8 +15,22 @@ public class MovesController : Controller
     public IActionResult Moves(Guid gameId, [FromBody]UserInputDto userInput)
     {
         var game = TestData.AGameDto(userInput.ClickedPos ?? new VectorDto {X = 1, Y = 1});
-        if (userInput.ClickedPos != null)
-            game.Cells.First(c => c.Type == "color4").Pos = userInput.ClickedPos;
+        
+        if (userInput.ClickedPos != null && !IsWall(game,userInput.ClickedPos))
+        {
+            GamesRepository.start = userInput.ClickedPos;
+        }
+        game.Cells.First(c => c.Type == "player").Pos = GamesRepository.start;
+        game = TestData.AGameDto(GamesRepository.start);
+        
+
         return Ok(game);
+    }
+
+    public bool IsWall(GameDto game, VectorDto pos)
+    {
+        var objects = new HashSet<string>(){"wall", "box"};
+        var b = game.Cells.Any(c => c.Pos.X == pos.X && c.Pos.Y == pos.Y && objects.Contains(c.Type));
+        return b;
     }
 }
